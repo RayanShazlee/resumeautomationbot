@@ -1,0 +1,26 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "resumebot"
+version = "1.0.0"
+description = "Convert a target resume PDF to LaTeX and generate JD-tailored resumes with Claude."
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "anthropic>=0.39.0",
+    "flask>=3.0.0",
+    "python-dotenv>=1.0.0",
+    "werkzeug>=3.0.0",
+]
+
+[project.scripts]
+resumebot = "resumebot.cli:main"
+resumebot-web = "resumebot.webapp:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+resumebot = ["templates/*.html"]

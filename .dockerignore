@@ -1,0 +1,19 @@
+# Keep the image small and avoid leaking local secrets/artifacts
+.git
+.gitignore
+.venv
+venv
+env
+__pycache__
+*.pyc
+*.pyo
+.env
+output/
+uploads/
+*.aux
+*.log
+*.out
+*.toc
+*.synctex.gz
+.DS_Store
+README.md

@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Resume ready — Resume Automation Bot</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #0b1120; --card: rgba(30,41,59,0.65); --border: rgba(148,163,184,0.16);
+      --border-strong: rgba(148,163,184,0.32); --accent: #6366f1; --accent-2: #8b5cf6;
+      --text: #e8edf6; --muted: #94a3b8; --field: #0b1220; --ok: #34d399; --radius: 16px;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+      color: var(--text); line-height: 1.55; background: var(--bg); min-height: 100vh; position: relative;
+    }
+    body::before {
+      content: ""; position: fixed; inset: 0; z-index: -1;
+      background:
+        radial-gradient(60rem 60rem at 12% -10%, rgba(99,102,241,0.22), transparent 60%),
+        radial-gradient(50rem 50rem at 110% 10%, rgba(139,92,246,0.18), transparent 55%),
+        radial-gradient(40rem 40rem at 50% 120%, rgba(6,182,212,0.14), transparent 55%), var(--bg);
+    }
+    .wrap { max-width: 880px; margin: 0 auto; padding: 56px 20px 96px; }
+
+    .head { text-align: center; margin-bottom: 28px; }
+    .check {
+      width: 64px; height: 64px; margin: 0 auto 16px; border-radius: 50%; display: grid; place-items: center;
+      background: linear-gradient(135deg, rgba(52,211,153,0.22), rgba(6,182,212,0.22));
+      border: 1px solid rgba(52,211,153,0.4); animation: pop .5s ease;
+    }
+    .check.warn { background: linear-gradient(135deg, rgba(245,158,11,0.22), rgba(217,119,6,0.22)); border-color: rgba(245,158,11,0.45); }
+    .check svg { width: 32px; height: 32px; }
+    @keyframes pop { 0% { transform: scale(.6); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+    h1 { font-size: clamp(1.6rem, 3.5vw, 2.1rem); font-weight: 800; letter-spacing: -0.02em; margin: 0 0 6px; }
+    .head p { margin: 0; color: var(--muted); }
+
+    .card {
+      background: var(--card); border: 1px solid var(--border); border-radius: var(--radius);
+      padding: 24px; margin-bottom: 20px; backdrop-filter: blur(14px);
+      box-shadow: 0 24px 60px -28px rgba(0,0,0,0.7);
+    }
+    .card h3 { margin: 0 0 14px; font-size: 1.05rem; display: flex; align-items: center; gap: 8px; }
+    .card h3 svg { width: 18px; height: 18px; color: var(--muted); }
+
+    .btns { display: flex; flex-wrap: wrap; gap: 12px; }
+    a.btn, button.btn {
+      display: inline-flex; align-items: center; gap: 9px; text-decoration: none; cursor: pointer;
+      padding: 13px 20px; border-radius: 12px; font-weight: 700; font-size: .95rem; font-family: inherit; border: 0;
+      color: #fff; background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      box-shadow: 0 14px 30px -12px rgba(99,102,241,0.6); transition: transform .12s, box-shadow .15s, opacity .15s;
+    }
+    a.btn:hover, button.btn:hover { transform: translateY(-1px); box-shadow: 0 18px 38px -12px rgba(99,102,241,0.7); }
+    a.btn.secondary, button.btn.secondary {
+      background: rgba(148,163,184,0.12); color: var(--text); border: 1px solid var(--border-strong); box-shadow: none;
+    }
+    a.btn.secondary:hover, button.btn.secondary:hover { border-color: var(--accent); }
+    .btn svg { width: 17px; height: 17px; }
+
+    .warn { background: rgba(120,53,15,0.4); border: 1px solid #b45309; color: #fde68a; padding: 14px 16px; border-radius: 12px; }
+
+    .preview-frame {
+      width: 100%; height: 580px; border: 1px solid var(--border-strong); border-radius: 12px;
+      background: #1e293b; overflow: hidden;
+    }
+    .preview-frame iframe { width: 100%; height: 100%; border: 0; }
+
+    details.src { border-top: 1px solid var(--border); margin-top: 4px; }
+    .src summary { cursor: pointer; padding: 14px 0 4px; color: var(--muted); font-weight: 600; font-size: .92rem; list-style: none; display: flex; align-items: center; gap: 8px; }
+    .src summary::-webkit-details-marker { display: none; }
+    .src summary .chev { transition: transform .2s; }
+    details[open] .src summary .chev, .src[open] summary .chev { transform: rotate(90deg); }
+    .code-head { display: flex; justify-content: flex-end; margin: 8px 0; }
+    pre {
+      background: var(--field); border: 1px solid var(--border-strong); border-radius: 12px; padding: 16px;
+      overflow: auto; max-height: 420px; font-size: .82rem; margin: 0;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; color: #cbd5e1;
+    }
+    .copy { font-size: .8rem; padding: 8px 14px; }
+    .back { display: inline-flex; align-items: center; gap: 8px; color: var(--muted); text-decoration: none; font-weight: 600; }
+    .back:hover { color: var(--text); }
+    .back svg { width: 16px; height: 16px; }
+    .toast {
+      position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(20px);
+      background: #1e293b; border: 1px solid var(--border-strong); color: var(--text);
+      padding: 12px 18px; border-radius: 12px; font-size: .9rem; opacity: 0; pointer-events: none;
+      transition: opacity .2s, transform .2s; box-shadow: 0 12px 30px -10px rgba(0,0,0,0.6);
+    }
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="head">
+      {% if compiled %}
+      <div class="check">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+      </div>
+      <h1>Your resume is ready</h1>
+      <p>Tailored to the job and compiled in your original style.</p>
+      {% else %}
+      <div class="check warn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#fbbf24" stroke-width="2.5"><path d="M12 9v4"/><path d="M12 17h.01"/><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/></svg>
+      </div>
+      <h1>LaTeX is ready</h1>
+      <p>The PDF didn’t compile, but your source is ready to use.</p>
+      {% endif %}
+    </div>
+
+    {% if compiled %}
+      <div class="card">
+        <div class="btns">
+          <a class="btn" href="/download/{{ basename }}.pdf" download>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Download PDF
+          </a>
+          <a class="btn secondary" href="/download/{{ basename }}.tex" download>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+            Download LaTeX
+          </a>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          Preview
+        </h3>
+        <div class="preview-frame"><iframe src="/download/{{ basename }}.pdf#toolbar=0" title="Resume preview"></iframe></div>
+      </div>
+    {% else %}
+      <div class="card">
+        <div class="warn">PDF compilation didn’t succeed, but your LaTeX source is ready.
+          You can compile it on <a class="link" href="https://www.overleaf.com" target="_blank" rel="noopener" style="color:#fcd34d;">Overleaf</a>.{% if compile_error %}<br><br>{{ compile_error }}{% endif %}</div>
+        <div class="btns" style="margin-top:16px;">
+          <a class="btn secondary" href="/download/{{ basename }}.tex" download>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+            Download LaTeX
+          </a>
+        </div>
+      </div>
+    {% endif %}
+
+    <div class="card">
+      <details class="src">
+        <summary>
+          <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;"><polyline points="9 18 15 12 9 6"/></svg>
+          View LaTeX source
+        </summary>
+        <div class="code-head">
+          <button class="btn secondary copy" id="copyBtn" type="button">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+            Copy
+          </button>
+        </div>
+        <pre id="latexSrc">{{ latex }}</pre>
+      </details>
+    </div>
+
+    <a class="back" href="/">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+      Generate another
+    </a>
+  </div>
+
+  <div class="toast" id="toast">Copied to clipboard</div>
+
+  <script>
+    const copyBtn = document.getElementById('copyBtn');
+    if (copyBtn) {
+      copyBtn.addEventListener('click', function () {
+        const text = document.getElementById('latexSrc').innerText;
+        navigator.clipboard.writeText(text).then(function () {
+          const t = document.getElementById('toast');
+          t.classList.add('show');
+          setTimeout(() => t.classList.remove('show'), 1800);
+        });
+      });
+    }
+  </script>
+</body>
+</html>
