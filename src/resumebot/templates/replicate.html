@@ -3,43 +3,31 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Resume Automation Bot</title>
+  <title>Replicate a resume — Resume Automation Bot</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <style>
     :root {
-      --bg: #0b1120;
-      --card: rgba(30, 41, 59, 0.65);
-      --border: rgba(148, 163, 184, 0.16);
-      --border-strong: rgba(148, 163, 184, 0.32);
-      --accent: #6366f1;
-      --accent-2: #8b5cf6;
-      --text: #e8edf6;
-      --muted: #94a3b8;
-      --field: #0b1220;
-      --ok: #34d399;
-      --radius: 16px;
+      --bg: #0b1120; --card: rgba(30,41,59,0.65); --border: rgba(148,163,184,0.16);
+      --border-strong: rgba(148,163,184,0.32); --accent: #6366f1; --accent-2: #8b5cf6;
+      --text: #e8edf6; --muted: #94a3b8; --field: #0b1220; --ok: #34d399; --radius: 16px;
     }
     * { box-sizing: border-box; }
     html { scroll-behavior: smooth; }
     body {
-      margin: 0;
-      font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-      color: var(--text); line-height: 1.55; background: var(--bg);
-      position: relative; min-height: 100vh;
+      margin: 0; font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+      color: var(--text); line-height: 1.55; background: var(--bg); position: relative; min-height: 100vh;
     }
     body::before {
       content: ""; position: fixed; inset: 0; z-index: -1;
       background:
         radial-gradient(60rem 60rem at 12% -10%, rgba(99,102,241,0.22), transparent 60%),
         radial-gradient(50rem 50rem at 110% 10%, rgba(139,92,246,0.18), transparent 55%),
-        radial-gradient(40rem 40rem at 50% 120%, rgba(6,182,212,0.14), transparent 55%),
-        var(--bg);
+        radial-gradient(40rem 40rem at 50% 120%, rgba(6,182,212,0.14), transparent 55%), var(--bg);
     }
     .wrap { max-width: 760px; margin: 0 auto; padding: 56px 20px 96px; }
-
-    .hero { text-align: center; margin-bottom: 30px; }
+    .hero { text-align: center; margin-bottom: 22px; }
     .badge {
       display: inline-flex; align-items: center; gap: 8px; font-size: .8rem; font-weight: 600;
       color: #c7d2fe; background: rgba(99,102,241,0.12); border: 1px solid rgba(99,102,241,0.3);
@@ -53,7 +41,12 @@
     }
     .sub { color: var(--muted); margin: 0 auto; max-width: 540px; font-size: 1.02rem; }
 
-    .steps-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 26px 0 8px; }
+    .tabs { display: flex; gap: 8px; justify-content: center; margin: 22px auto 0; max-width: 420px; background: var(--card); border: 1px solid var(--border); border-radius: 999px; padding: 6px; }
+    .tabs a { flex: 1; text-align: center; text-decoration: none; color: var(--muted); font-weight: 600; font-size: .92rem; padding: 10px 14px; border-radius: 999px; transition: color .15s, background .15s; }
+    .tabs a:hover { color: var(--text); }
+    .tabs a.active { color: #fff; background: linear-gradient(135deg, var(--accent), var(--accent-2)); box-shadow: 0 10px 24px -12px rgba(99,102,241,0.7); }
+
+    .steps-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 22px 0 8px; }
     @media (max-width: 560px) { .steps-row { grid-template-columns: 1fr; } }
     .step { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 14px; text-align: center; backdrop-filter: blur(8px); }
     .step .n {
@@ -73,15 +66,14 @@
     label.lbl { display: flex; align-items: baseline; gap: 8px; font-weight: 600; margin-bottom: 8px; flex-wrap: wrap; }
     .hint { color: var(--muted); font-weight: 400; font-size: .85rem; }
 
-    input[type=password], input[type=text], textarea {
+    input[type=password], input[type=text] {
       width: 100%; background: var(--field); color: var(--text);
       border: 1px solid var(--border-strong); border-radius: 12px;
       padding: 13px 14px; font-size: .96rem; font-family: inherit;
       transition: border-color .15s, box-shadow .15s, background .15s;
     }
-    input::placeholder, textarea::placeholder { color: #5b6b85; }
-    input:focus, textarea:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 4px rgba(99,102,241,0.18); background: #0c1424; }
-    textarea { resize: vertical; min-height: 120px; }
+    input::placeholder { color: #5b6b85; }
+    input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 4px rgba(99,102,241,0.18); background: #0c1424; }
     .key-wrap { position: relative; }
     .key-wrap input { padding-right: 76px; }
     .reveal {
@@ -92,6 +84,7 @@
     .reveal:hover { color: var(--text); }
     .link { color: #a5b4fc; text-decoration: none; }
     .link:hover { text-decoration: underline; }
+    .scope-note { color: var(--muted); font-size: .82rem; margin: 10px 0 0; }
 
     .drop {
       display: flex; align-items: center; gap: 14px; background: var(--field);
@@ -109,19 +102,6 @@
     .drop .txt strong { display: block; font-size: .95rem; }
     .drop .txt span { font-size: .82rem; color: var(--muted); display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     .drop input[type=file] { display: none; }
-
-    .sections { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 4px; }
-    @media (max-width: 520px) { .sections { grid-template-columns: 1fr; } }
-    .chk {
-      display: flex; align-items: center; gap: 11px; background: var(--field);
-      border: 1px solid var(--border-strong); border-radius: 11px; padding: 12px 13px;
-      cursor: pointer; user-select: none; transition: border-color .15s, background .15s;
-    }
-    .chk:hover { border-color: var(--accent); }
-    .chk:has(input:checked) { border-color: rgba(99,102,241,0.7); background: linear-gradient(0deg, rgba(99,102,241,0.12), rgba(99,102,241,0.12)), var(--field); }
-    .chk input { width: 18px; height: 18px; accent-color: var(--accent); cursor: pointer; flex: none; }
-    .chk span { font-weight: 500; font-size: .92rem; }
-    .scope-note { color: var(--muted); font-size: .82rem; margin: 10px 0 0; }
 
     .submit {
       margin-top: 28px; width: 100%; border: 0; border-radius: 12px; padding: 16px 22px;
@@ -150,31 +130,26 @@
     .loader h3 { margin: 0 0 6px; font-size: 1.15rem; }
     .loader p { margin: 0; color: var(--muted); font-size: .9rem; }
     .loader .tip { margin-top: 16px; font-size: .82rem; color: #7c8aa5; }
-
-    .tabs { display: flex; gap: 8px; justify-content: center; margin: 4px auto 0; max-width: 420px; background: var(--card); border: 1px solid var(--border); border-radius: 999px; padding: 6px; }
-    .tabs a { flex: 1; text-align: center; text-decoration: none; color: var(--muted); font-weight: 600; font-size: .92rem; padding: 10px 14px; border-radius: 999px; transition: color .15s, background .15s; }
-    .tabs a:hover { color: var(--text); }
-    .tabs a.active { color: #fff; background: linear-gradient(135deg, var(--accent), var(--accent-2)); box-shadow: 0 10px 24px -12px rgba(99,102,241,0.7); }
   </style>
 </head>
 <body>
   <div class="wrap">
     <div class="hero">
       <span class="badge"><span class="dot"></span> Powered by Claude</span>
-      <h1>Resume Automation Bot</h1>
-      <p class="sub">Upload a resume whose <strong>format</strong> you love, paste a job
-        description and your details — get a tailored resume in the exact same style.</p>
+      <h1>Replicate &amp; compare</h1>
+      <p class="sub">Upload a resume and the multi-agent system rebuilds it in LaTeX
+        — same design, same content — then shows the original and the replica side by side.</p>
     </div>
 
     <nav class="tabs">
-      <a href="/" class="active">Tailor to a job</a>
-      <a href="/replicate">Replicate &amp; compare</a>
+      <a href="/">Tailor to a job</a>
+      <a href="/replicate" class="active">Replicate &amp; compare</a>
     </nav>
 
     <div class="steps-row">
-      <div class="step"><div class="n">1</div><p>Reads your PDF &amp; rebuilds the design in LaTeX</p></div>
-      <div class="step"><div class="n">2</div><p>Tailors the content to the job description</p></div>
-      <div class="step"><div class="n">3</div><p>Compiles a polished, ready-to-send PDF</p></div>
+      <div class="step"><div class="n">1</div><p>Agents read the PDF &amp; rebuild the design in LaTeX</p></div>
+      <div class="step"><div class="n">2</div><p>Visually refine the replica to match the original</p></div>
+      <div class="step"><div class="n">3</div><p>Compile &amp; compare both side by side</p></div>
     </div>
 
     {% if error %}
@@ -184,7 +159,7 @@
     </div>
     {% endif %}
 
-    <form class="card" id="form" method="post" action="/generate" enctype="multipart/form-data">
+    <form class="card" id="form" method="post" action="/replicate" enctype="multipart/form-data">
       <div class="field">
         <label class="lbl" for="api_key">Anthropic API key
           <span class="hint">starts with “sk-ant-” · used only for this request, never stored</span></label>
@@ -197,8 +172,8 @@
       </div>
 
       <div class="field">
-        <label class="lbl" for="target_pdf">Target resume PDF
-          <span class="hint">the design/format you want to copy</span></label>
+        <label class="lbl" for="target_pdf">Resume PDF to replicate
+          <span class="hint">the design we’ll reproduce exactly</span></label>
         <label class="drop" id="drop" for="target_pdf">
           <span class="ic">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
@@ -211,57 +186,17 @@
         </label>
       </div>
 
-      <div class="field">
-        <label class="lbl" for="job_description">Job description
-          <span class="hint">paste the full JD</span></label>
-        <textarea id="job_description" name="job_description" placeholder="Paste the job description here…" required></textarea>
-      </div>
-
-      <div class="field">
-        <label class="lbl" for="details">Your details
-          <span class="hint">experience, skills, education, contact info (optional)</span></label>
-        <textarea id="details" name="details" placeholder="Name, contact, work history, skills, education, projects…"></textarea>
-      </div>
-
-      <div class="field">
-        <label class="lbl">Sections to update
-          <span class="hint">tick only what should be tailored — unticked sections stay exactly as your original</span></label>
-        <div class="sections">
-          {% for s in sections %}
-          <label class="chk">
-            <input type="checkbox" name="section::{{ s }}" {% if s in ('Profile Summary', 'Work Experience') %}checked{% endif %} />
-            <span>{{ s }}</span>
-          </label>
-          {% endfor %}
-        </div>
-        <p class="scope-note">Leave all unticked to tailor the entire resume.</p>
-      </div>
-
-      <div class="field">
-        <label class="lbl" for="instructions">Writing-style instructions
-          <span class="hint">optional · tell the bot HOW to write</span></label>
-        <textarea id="instructions" name="instructions" placeholder="e.g. Keep my original wording and only blend in JD keywords where they fit — don’t replace whole bullets. Confident, concise tone with strong action verbs. Keep all metrics. Prefer single-line bullets."></textarea>
-      </div>
-
-      <div class="field">
-        <label class="chk" style="margin-top:4px">
-          <input type="checkbox" name="match_style" value="1" checked />
-          <span>Copy the uploaded resume’s style
-            <span class="hint">two AI agents analyse the original’s writing &amp; layout, then match it “same to same”</span></span>
-        </label>
-      </div>
-
-      <button class="submit" id="go" type="submit">✨ Generate tailored resume</button>
+      <button class="submit" id="go" type="submit">🪄 Replicate this resume</button>
     </form>
 
-    <p class="foot">Your files and key are used only to generate this resume and are never shared.</p>
+    <p class="foot">Your files and key are used only to replicate this resume and are never shared.</p>
   </div>
 
   <div class="overlay" id="overlay">
     <div class="loader">
       <div class="ring"></div>
-      <h3>Crafting your resume…</h3>
-      <p>Reading the design, tailoring content, and compiling the PDF.</p>
+      <h3>Replicating your resume…</h3>
+      <p>Reading the design, rebuilding it in LaTeX, refining, and compiling.</p>
       <p class="tip">This usually takes 30–90 seconds. Please keep this tab open.</p>
     </div>
   </div>

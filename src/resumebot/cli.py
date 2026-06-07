@@ -104,6 +104,8 @@ def _cmd_generate(args: argparse.Namespace) -> int:
         instructions=(_read(args.instructions) or args.instructions_text or ""),
         output_basename=args.output,
         compile_pdf=not args.no_compile,
+        match_style=not args.no_style_match,
+        enforce_one_page=not args.no_one_page,
     )
 
     print(f"LaTeX source: {result.tex_path}")
@@ -158,6 +160,19 @@ def build_parser() -> argparse.ArgumentParser:
     )
     p_gen.add_argument("-o", "--output", default="resume", help="Output base name (no extension).")
     p_gen.add_argument("--no-compile", action="store_true", help="Skip PDF compilation.")
+    p_gen.add_argument(
+        "--no-style-match",
+        action="store_true",
+        help=(
+            "Disable the two-agent style copying (Style Analyst + Style Matcher) "
+            "that makes the result mirror the uploaded resume's style."
+        ),
+    )
+    p_gen.add_argument(
+        "--no-one-page",
+        action="store_true",
+        help="Do not condense the resume to fit on a single page.",
+    )
     p_gen.set_defaults(func=_cmd_generate)
 
     return parser

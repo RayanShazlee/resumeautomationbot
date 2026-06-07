@@ -17,7 +17,7 @@ from werkzeug.utils import secure_filename
 
 from .config import OUTPUT_DIR, UPLOAD_DIR, Config
 from .generator import AVAILABLE_SECTIONS
-from .pipeline import run_pipeline
+from .pipeline import replicate_resume, run_pipeline
 
 app = Flask(__name__)
 app.config["MAX_CONTENT_LENGTH"] = 16 * 1024 * 1024  # 16 MB upload cap
@@ -39,6 +39,7 @@ def generate():
     job_description = (request.form.get("job_description") or "").strip()
     details = (request.form.get("details") or "").strip()
     instructions = (request.form.get("instructions") or "").strip()
+    match_style = bool(request.form.get("match_style"))
     upload = request.files.get("target_pdf")
 
     # Which sections to tailor. If the user ticks none, tailor everything.
@@ -74,6 +75,7 @@ def generate():
             instructions=instructions,
             output_basename=basename,
             compile_pdf=True,
+            match_style=match_style,
         )
     except Exception as exc:  # noqa: BLE001
         traceback.print_exc()
@@ -98,6 +100,76 @@ def download(filename: str):
     if not target.exists():
         abort(404)
     return send_from_directory(OUTPUT_DIR, safe, as_attachment=True)
+
+
+@app.get("/view/<path:filename>")
+def view(filename: str):
+    """Serve a generated file INLINE (for embedding in a preview/compare frame)."""
+    safe = secure_filename(filename)
+    if not (OUTPUT_DIR / safe).exists():
+        abort(404)
+    return send_from_directory(OUTPUT_DIR, safe, as_attachment=False)
+
+
+@app.get("/view-upload/<path:filename>")
+def view_upload(filename: str):
+    """Serve an uploaded original PDF INLINE (for the side-by-side comparison)."""
+    safe = secure_filename(filename)
+    if not (UPLOAD_DIR / safe).exists():
+        abort(404)
+    return send_from_directory(UPLOAD_DIR, safe, as_attachment=False)
+
+
+@app.get("/replicate")
+def replicate_page():
+    return render_template("replicate.html")
+
+
+@app.post("/replicate")
+def replicate():
+    api_key = (request.form.get("api_key") or "").strip()
+    try:
+        config = Config.load(api_key=api_key)
+    except RuntimeError as exc:
+        return render_template("replicate.html", error=str(exc)), 400
+
+    upload = request.files.get("target_pdf")
+    if not upload or not upload.filename:
+        return render_template(
+            "replicate.html", error="Please upload a resume PDF to replicate."
+        ), 400
+
+    # Save the uploaded original so it can be shown next to the replica.
+    safe_name = secure_filename(upload.filename) or "target.pdf"
+    upload_name = f"{uuid.uuid4().hex}_{safe_name}"
+    target_path = UPLOAD_DIR / upload_name
+    upload.save(target_path)
+
+    basename = f"replica_{uuid.uuid4().hex[:8]}"
+
+    try:
+        result = replicate_resume(
+            config,
+            target_path,
+            output_basename=basename,
+        )
+    except Exception as exc:  # noqa: BLE001
+        traceback.print_exc()
+        return render_template(
+            "replicate.html", error=f"Replication failed: {exc}"
+        ), 500
+
+    return render_template(
+        "replicate_result.html",
+        basename=basename,
+        original_filename=upload_name,
+        compiled=result.compiled,
+        compile_error=result.compile_error,
+        latex=result.template_latex,
+        style_profile=result.style_profile,
+        discriminator_feedback=result.discriminator_feedback,
+        replica_pages=result.replica_pages,
+    )
 
 
 def main() -> None:

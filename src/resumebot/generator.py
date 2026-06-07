@@ -85,6 +85,7 @@ CONTENT — write it ORIGINALLY, do not copy-paste:
   degrees, metrics). Reframing and rephrasing is encouraged; inventing facts is
   forbidden.
 - Escape LaTeX special characters in user content (&, %, $, #, _, {, }, ~, ^).
+__STYLE_PROFILE__
 __SCOPE_RULES__
 FITTING TO ONE PAGE — do this by editing CONTENT only:
 - Prefer keeping 3-5 of the strongest, most JD-relevant bullets per role and
@@ -120,6 +121,7 @@ def generate_resume(
     details: str,
     sections: Optional[Sequence[str]] = None,
     instructions: str = "",
+    style_profile: str = "",
 ) -> str:
     """Return tailored LaTeX resume source.
 
@@ -128,11 +130,13 @@ def generate_resume(
     is kept exactly as in the template. When ``None`` (default), the whole resume
     is tailored. ``instructions`` is optional free-text guidance from the user on
     writing style (e.g. how to phrase work experience, whether to mix or replace
-    content, tone, etc.).
+    content, tone, etc.). ``style_profile`` is the Style Analyst agent's
+    description of the uploaded resume's style, which the writer should emulate.
     """
     scope_rules = _build_scope_rules(sections)
     prompt = (
         _PROMPT.replace("__SCOPE_RULES__", scope_rules)
+        .replace("__STYLE_PROFILE__", _build_style_profile(style_profile))
         .replace("__USER_INSTRUCTIONS__", _build_user_instructions(instructions))
         .replace("__TEMPLATE__", template_latex)
         .replace("__JOB_DESCRIPTION__", job_description)
@@ -157,6 +161,22 @@ def generate_resume(
             frozen = recombine_document(template_preamble, spliced)
 
     return frozen
+
+
+def _build_style_profile(style_profile: str) -> str:
+    """Wrap the Style Analyst's profile for injection into the prompt."""
+    text = (style_profile or "").strip()
+    if not text:
+        return ""
+    return (
+        "\nORIGINAL RESUME STYLE PROFILE (match this style — it describes HOW the\n"
+        "uploaded resume is written and laid out; emulate its writing voice, tense,\n"
+        "bullet anatomy, verb usage, metric phrasing, tone and formatting habits so\n"
+        "the result reads in the SAME style, but with the candidate's own facts and\n"
+        "NO copied wording). It must not override the truthfulness or formatting\n"
+        "rules above:\n"
+        f"{text}\n"
+    )
 
 
 def _build_user_instructions(instructions: str) -> str:

@@ -52,9 +52,47 @@ STRUCTURE & DECORATION
   icons (use fontawesome5 if icons are present, else plain text).
 - Match section headings exactly: text case, the rule/underline style and
   thickness (\titlerule, \hrule height), spacing above/below, and indentation.
+- HORIZONTAL RULES MUST NOT OVERLAP TEXT: when a section heading has an
+  underline/rule, put the rule on its OWN line with clear vertical space, e.g.
+  `\nointerlineskip` is NOT enough — use a small \vspace before the rule and the
+  text resumes below it. Prefer `{\color{rulecolor}\titlerule[0.8pt]}` or
+  `\par\vspace{2pt}\hrule height 0.8pt\vspace{4pt}` so the line sits cleanly
+  between the heading and the body and never crosses the heading text, the name,
+  or the first line of content. Give every rule non-zero vertical breathing room
+  above and below.
 - Match bullet style (•, –, ▪), bullet indentation, and the line spacing inside
   and between entries. Reproduce date alignment (right-aligned dates via \hfill
   or tabular).
+
+SKILLS / TECHNICAL SKILLS SECTION (reproduce its structure precisely):
+- Detect how skills are laid out in the PDF and mirror it EXACTLY: bold category
+  labels each on their own line (e.g. "Languages:", "Frameworks:", "Tools:")
+  followed by their values; OR a single comma-separated wrapped list; OR two/
+  three aligned columns. Do not flatten a categorised layout into one list.
+- Use a clean, robust construct for it: an aligned `tabular`/`tabularx` for
+  column or label:value layouts, or a tight list — NOT scattered \hspace or
+  manual spaces. Ensure even spacing between rows, a consistent gap after each
+  label, no items running into the margin, and spacing as tight as the original.
+- COLUMN SPACING (critical — columns MUST NOT touch): never let adjacent columns
+  or their text collide. Do NOT use empty `@{}` separators between columns that
+  hold text. Leave a clear horizontal gap between columns, e.g. add a small
+  fixed gap with `@{\hspace{1.5em}}` between columns, or use `tabularx` with `X`
+  columns and `\setlength{\tabcolsep}{8pt}` (never 0pt). For a label:value row,
+  put a gap after the label (e.g. a `p{..}` label column plus column separation)
+  so the value never butts up against the bold label. Verify visually that there
+  is whitespace between every pair of columns.
+- For wrapped value lists, give each cell a fixed width (`p{}` / `X`) so long
+  values wrap INSIDE the column instead of overflowing into the next column or
+  the margin.
+- ROW SPACING (critical — rows MUST NOT touch): NEVER use negative row spacing
+  such as `\\[-2pt]` or `\\[-3pt]` between table rows — negative leading makes
+  the lines collide and descenders overlap the row below. Use a plain `\\` or a
+  small POSITIVE gap like `\\[2pt]` and keep that SAME value on every row so the
+  vertical rhythm is even. Do NOT squeeze `\arraystretch` below `0.95` (use
+  `1.0` for multi-line cells). When some cells in a multi-column skills table
+  wrap to 2–3 lines while their row-mates are 1 line, balance the content (split
+  long categories, move items) so cells in a row have similar height — this
+  keeps the gaps regular instead of leaving big blank holes in the short cells.
 
 DO NOT INVENT DECORATIONS (critical):
 - Add a horizontal rule / line ONLY where one is actually visible in the PDF.
@@ -107,6 +145,30 @@ Then EDIT the LaTeX so the GENERATED output looks like the ORIGINAL:
   but NOT in ORIGINAL. Especially: if GENERATED has a horizontal line between the
   contact/header block and the first section (e.g. Profile Summary) that the
   ORIGINAL does not have, delete it. Never add a rule the original lacks.
+- SKILLS / TECHNICAL SKILLS SECTION: check this area closely. Reproduce the
+  original's exact skills layout (bold category labels on their own lines, a
+  single comma-separated list, or aligned columns) and fix any spacing problems —
+  even row spacing, a consistent gap after each label, proper column alignment
+  (use a tabular/tabularx, not scattered \hspace), and nothing spilling into the
+  margin.
+- COLUMNS MUST NOT TOUCH in the skills/technical section: if adjacent columns or
+  their text are colliding, add clear horizontal space between them — increase
+  the inter-column gap (a non-zero \tabcolsep, never zero; or an explicit small
+  \hspace separator between columns), remove any empty separator that strips the
+  gap, and give wrapping cells a fixed width so long values wrap inside their own
+  column instead of running into the next one.
+- ROWS MUST NOT TOUCH: never use negative row spacing (no `\\[-2pt]` or
+  `\\[-3pt]` style negative leading) between rows — it makes lines collide. Use
+  a plain double-backslash or an equal small positive gap on EVERY row so the
+  spacing is even. Do not squeeze the array-stretch value below 0.95. If some
+  cells wrap to more lines than their row-mates and leave big uneven blank gaps,
+  rebalance the content so cells in a row are similar height and the gaps stay
+  regular.
+- FIX OVERLAPPING HORIZONTAL LINES: if any rule/underline in GENERATED touches or
+  crosses text (the name, a section heading, or a line of content), separate them
+  by forcing the rule onto its own line with vertical space around it
+  (\par\vspace before, \vspace after). A heading rule must sit cleanly BELOW the
+  heading text, not through it; never let two rules or a rule and text collide.
 
 Keep the document compilable with pdflatex and keep the same example content.
 Do NOT regress things that already match.
