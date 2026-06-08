@@ -160,6 +160,18 @@ MATCH THE SKILLS / TECHNICAL SKILLS SECTION CAREFULLY (common problem area):
   label, nothing overflowing into the margin, and proper column alignment (use a
   tabular/`tabularx` or an aligned list, not scattered \hspace). Keep this
   section's line spacing tight and even like the rest of the resume.
+- COLUMNS MUST NOT TOUCH: if columns or their text are colliding, add clear
+  horizontal space between them — use a non-zero inter-column gap (a non-zero
+  \tabcolsep, never zero, or an explicit small \hspace separator), remove any
+  empty separator that strips the gap, leave a gap after each bold label so the
+  value never butts against it, and give wrapping cells a fixed width so long
+  values wrap inside their own column instead of bleeding into the next.
+- ROWS MUST NOT TOUCH: never use negative row spacing (no `\\[-2pt]` /
+  `\\[-3pt]` negative leading) between table rows — it makes lines collide. Use
+  a plain double-backslash or an equal small positive gap on EVERY row so the
+  rhythm is even, and do not squeeze the array-stretch value below 0.95. If some
+  cells wrap to more lines than their row-mates, leaving uneven blank gaps,
+  rebalance the content so cells in a row are similar height.
 
 FIX OVERLAPPING HORIZONTAL LINES (common defect):
 - If any rule/underline touches or crosses text — a section-heading rule cutting
@@ -290,6 +302,17 @@ INSPECT THE SKILLS / TECHNICAL SKILLS SECTION CLOSELY (common problem area):
   label and its values, consistent and even spacing between rows, no items
   overflowing into the margin, and proper alignment if the original uses columns
   (use a tabular/`tabularx` or aligned list rather than scattered \hspace).
+- COLUMNS MUST NOT TOUCH: if adjacent columns or their text are colliding or have
+  no gap between them, fix it by adding clear horizontal space — a non-zero
+  inter-column gap (non-zero \tabcolsep, never zero, or an explicit small
+  \hspace separator), removing any empty separator that strips the gap, and
+  giving wrapping cells a fixed width so long values wrap inside their column
+  instead of bleeding into the neighbouring column or the margin.
+- ROWS MUST NOT TOUCH: flag and fix any negative row spacing (no `\\[-2pt]` /
+  `\\[-3pt]` negative leading) between table rows — it makes lines collide. Rows
+  must use a plain double-backslash or an equal small positive gap on every row,
+  with the array-stretch value not squeezed below 0.95. If cells in a row wrap
+  to very different line counts and leave uneven blank gaps, rebalance them.
 - Keep the inter-line spacing in this section even and tight like the original —
   not looser than the rest of the resume.
 
